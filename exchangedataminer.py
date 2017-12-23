@@ -104,4 +104,5 @@ def prepareDataFrame():
 
 if __name__ == "__main__":
     loop = prepareDataFrame()
+    print("Starting Data Extraction...")
     loop()
