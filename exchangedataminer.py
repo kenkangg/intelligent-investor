@@ -9,7 +9,7 @@ import s3upload
 
 
 INTERVAL = 5.0
-EXPORT_TRESHOLD = 2
+EXPORT_TRESHOLD = 120
 
 def createCoinDataFrame(df, public_client):
     """ Returns dataframe of all data extracted from GDAX API"""
@@ -64,9 +64,10 @@ def prepareDataFrame():
         # Checks if there is a change in day
         # If there is, reset pandas DataFrame and reset datacount
         if today != prevdate:
-            upload = True
+            print(today)
             df = resetCoinDataFrame()
-            count == 0
+            os.remove("data/{}.csv".format(prevdate))
+            prevdate = today
 
 
         # Collect GDAX data into a single row DataFrame
@@ -76,7 +77,6 @@ def prepareDataFrame():
         # Every (EXPORT_TRESHOLD) iterations, export dataframe to csv
         count = count + 1
         if count % EXPORT_TRESHOLD == 1:
-
             # if file does not exist write header
             if not os.path.isfile(file_name):
                 df.to_csv(file_name, sep=',')
@@ -84,15 +84,9 @@ def prepareDataFrame():
             else: # else it exists so append without writing the header
                 df.to_csv(file_name, mode = 'a', sep=',', header=False)
                 df = resetCoinDataFrame()
+            #Upload CSV To Amazon S3 Database
+            s3upload.uploadToS3(file_name)
 
-        #Upload CSV To Amazon S3 Database, then delete file in order to conserve storage space.
-        if upload:
-            yesterday_file = "data/{}.csv".format(prevdate)
-            s3upload.uploadToS3(yesterday_file)
-            print("Sent {} to S3".format(yesterday_file))
-            os.remove(yesterday_file)
-            upload = False
-        prevdate = today
         # if count % 5 == 0:
         #     print("Size of Dataset: {}".format(count))
 
