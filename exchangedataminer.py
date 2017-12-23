@@ -90,11 +90,12 @@ def prepareDataFrame():
         #Upload CSV To Amazon S3 Database, then delete file in order to conserve storage space.
         if upload:
             s3upload.uploadToS3(yesterday_file)
+            print("Sent {} to S3".format(yesterday_file))
             os.remove(yesterday_file)
             upload = False
 
-        if count % 5 == 0:
-            print("Size of Dataset: {}".format(count))
+        # if count % 5 == 0:
+        #     print("Size of Dataset: {}".format(count))
 
 
     return loopExtraction
