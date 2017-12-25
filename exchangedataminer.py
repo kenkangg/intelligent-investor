@@ -54,8 +54,8 @@ def prepareDataFrame():
         """
         nonlocal df, count, public_client, prevdate
         upload = False
-
         threading.Timer(INTERVAL, loopExtraction).start()
+        print(time.time())
 
         now = datetime.datetime.now()
         today = now.strftime("%Y-%m-%d")
@@ -85,8 +85,8 @@ def prepareDataFrame():
                 df.to_csv(file_name, mode = 'a', sep=',', header=False)
                 df = resetCoinDataFrame()
             #Upload CSV To Amazon S3 Database
-            s3upload.uploadToS3(file_name)
-
+            s3upload.uploadToS3("README.md")
+        time.time()
         # if count % 5 == 0:
         #     print("Size of Dataset: {}".format(count))
 
